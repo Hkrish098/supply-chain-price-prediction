@@ -14,7 +14,7 @@ const stagger = {
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
-  show:   { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] } },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] as const } },
 };
 
 const ModuleCard = ({
@@ -84,7 +84,7 @@ const PredictionModuleBanner = ({ onBack }: { onBack: () => void }) => (
     className="relative mb-6 overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 px-6 py-8 text-white shadow-2xl shadow-indigo-600/30 sm:px-8"
     initial={{ opacity: 0, y: -16 }}
     animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] as const }}
   >
     {/* decorative blobs */}
     <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-white/10 blur-3xl" />
@@ -211,7 +211,7 @@ export const PredictionWorkspace: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16, transition: { duration: 0.25 } }}
-            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] as const }}
           >
             <PredictionModuleBanner onBack={goToLanding} />
             <PredictForm />
