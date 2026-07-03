@@ -4,6 +4,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import OnboardingChat from '@/components/OnboardingChat';
 import PredictForm from '@/components/PredictForm';
+import SiteFooter from '@/components/SiteFooter';
+import McpShowcase from '@/components/McpShowcase';
 
 type View = 'landing' | 'prediction';
 
@@ -81,7 +83,7 @@ const ModuleCard = ({
 
 const PredictionModuleBanner = ({ onBack }: { onBack: () => void }) => (
   <motion.div
-    className="relative mb-6 overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 px-6 py-8 text-white shadow-2xl shadow-indigo-600/30 sm:px-8"
+    className="relative overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 px-6 py-8 text-white shadow-2xl shadow-indigo-600/30 sm:px-8"
     initial={{ opacity: 0, y: -16 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] as const }}
@@ -203,18 +205,25 @@ export const PredictionWorkspace: React.FC = () => {
                 />
               </div>
             </motion.section>
+
+            <SiteFooter />
           </motion.div>
 
         ) : (
           <motion.div
             key="prediction"
+            className="mx-auto w-full max-w-6xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16, transition: { duration: 0.25 } }}
             transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] as const }}
           >
-            <PredictionModuleBanner onBack={goToLanding} />
-            <PredictForm />
+            <PredictForm
+              moduleBanner={<PredictionModuleBanner onBack={goToLanding} />}
+            />
+            <section className="mt-16 w-full border-t border-white/50 pt-10 pb-8">
+              <McpShowcase />
+            </section>
           </motion.div>
         )}
 

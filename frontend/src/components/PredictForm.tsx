@@ -164,7 +164,7 @@ type PredictFormState = {
   order_priority: (typeof orderPriorities)[number];
 };
 
-export const PredictForm: React.FC = () => {
+export const PredictForm: React.FC<{ moduleBanner?: React.ReactNode }> = ({ moduleBanner }) => {
   const [form, setForm] = useState<PredictFormState>({
     order_quantity: '',
     discount: '',
@@ -356,14 +356,15 @@ export const PredictForm: React.FC = () => {
   }, [expertResult]);
 
   return (
-    <div id="predict" className="grid gap-6 lg:grid-cols-[1fr_360px] h-full">
-      {/* LEFT PANEL: Control Center */}
+    <div id="predict" className="grid gap-6 lg:grid-cols-[1fr_360px] lg:items-start h-full">
+      {/* LEFT PANEL: module banner + control center */}
       <motion.div
-        className="w-full"
+        className="w-full space-y-6"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
       >
+        {moduleBanner}
         <Card className="w-full rounded-2xl border border-white/60 bg-white/70 shadow-2xl shadow-indigo-200/30 backdrop-blur-md p-0 overflow-hidden">
           {/* Header Section */}
           <div className="border-b border-white/50 bg-gradient-to-r from-indigo-50/60 to-violet-50/60 backdrop-blur-sm px-8 py-6">
