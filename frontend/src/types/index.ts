@@ -42,7 +42,9 @@ export interface InsightRequest {
 }
 
 export interface PredictionHistoryItem {
-  timestamp: string;
+  id?: string;
+  timestamp?: string;
+  created_at?: string;
   request: PredictRequest;
   predicted_unit_price: number;
 }

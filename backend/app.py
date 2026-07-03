@@ -561,6 +561,28 @@ async def get_prediction_history(authorization: Optional[str] = Header(None)):
     # Supabase not configured — return local
     return {"success": True, "history": prediction_history, "count": len(prediction_history)}
 
+@app.delete("/api/predictions/history/{prediction_id}")
+async def delete_prediction_item(prediction_id: str):
+    """Delete a single prediction by Supabase id or local timestamp."""
+    if supabase_admin:
+        try:
+            supabase_admin.table('predictions').delete().eq('id', prediction_id).execute()
+            return {"success": True, "message": "Prediction deleted."}
+        except Exception as e:
+            print(f"⚠️ Supabase delete failed, trying local: {e}")
+
+    decoded = prediction_id.replace("%3A", ":").replace("%2B", "+").replace("%2F", "/")
+    before = len(prediction_history)
+    prediction_history[:] = [
+        e for e in prediction_history
+        if e.get("timestamp") != decoded and e.get("timestamp") != prediction_id
+    ]
+    if len(prediction_history) < before:
+        save_prediction_history()
+        return {"success": True, "message": "Prediction deleted."}
+
+    raise HTTPException(status_code=404, detail="Prediction not found.")
+
 @app.delete("/api/predictions/history")
 async def delete_prediction_history():
     prediction_history.clear()
