@@ -299,7 +299,7 @@ def get_user_from_token(authorization: Optional[str]):
 # ==========================================
 # FASTAPI ENDPOINTS
 # ==========================================
-@app.get("/api/health")
+@app.api_route("/api/health", methods=["GET", "HEAD"])
 async def health_check():
     return {"status": "healthy", "model_loaded": model is not None}
 
