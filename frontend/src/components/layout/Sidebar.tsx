@@ -158,8 +158,8 @@ export const Sidebar: React.FC<Props> = ({ onClose, className }) => {
   };
 
   return (
-    <aside className={wrapperClass}>
-      <div className="flex h-full max-h-[calc(100vh-120px)] w-full flex-col rounded-2xl border border-white/60 bg-white/60 shadow-xl shadow-slate-200/30 backdrop-blur-md">
+    <aside className={`${wrapperClass} sticky top-24 self-start`}>
+      <div className="flex h-[calc(100vh-120px)] max-h-[calc(100vh-120px)] w-full flex-col overflow-hidden rounded-2xl border border-white/60 bg-white/60 shadow-xl shadow-slate-200/30 backdrop-blur-md">
         <div className="flex items-center justify-between px-3 py-3">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-sm text-white">
@@ -196,7 +196,7 @@ export const Sidebar: React.FC<Props> = ({ onClose, className }) => {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-2 py-1" ref={menuRef}>
+        <div className="min-h-0 flex-1 overflow-y-auto px-2 py-1" ref={menuRef}>
           <p className="px-2 py-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
             Recent
           </p>

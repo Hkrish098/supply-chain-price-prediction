@@ -42,7 +42,7 @@ export const DashboardWrapper: React.FC<React.PropsWithChildren<Record<string, u
 
       <div className="mx-auto grid max-w-[1600px] grid-cols-1 gap-6 px-4 py-8 sm:px-6 lg:px-8 xl:grid-cols-[260px_1fr] min-h-[calc(100vh-88px)]">
         <motion.div
-          className="hidden xl:block"
+          className="sticky top-24 hidden self-start xl:block"
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4 }}
@@ -50,7 +50,7 @@ export const DashboardWrapper: React.FC<React.PropsWithChildren<Record<string, u
           <Sidebar />
         </motion.div>
         <motion.main
-          className="min-h-[70vh]"
+          className="min-h-[70vh] w-full min-w-0"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}

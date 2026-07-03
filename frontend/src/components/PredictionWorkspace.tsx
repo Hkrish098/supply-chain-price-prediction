@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import OnboardingChat from '@/components/OnboardingChat';
 import PredictForm from '@/components/PredictForm';
 import SiteFooter from '@/components/SiteFooter';
-import McpShowcase from '@/components/McpShowcase';
 
 type View = 'landing' | 'prediction';
 
@@ -79,36 +78,6 @@ const ModuleCard = ({
       )}
     </span>
   </motion.button>
-);
-
-const PredictionModuleBanner = ({ onBack }: { onBack: () => void }) => (
-  <motion.div
-    className="relative overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 px-6 py-8 text-white shadow-2xl shadow-indigo-600/30 sm:px-8"
-    initial={{ opacity: 0, y: -16 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] as const }}
-  >
-    {/* decorative blobs */}
-    <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-white/10 blur-3xl" />
-    <div className="pointer-events-none absolute -bottom-8 left-24 h-32 w-32 rounded-full bg-violet-400/20 blur-2xl" />
-
-    <div className="relative flex flex-wrap items-start justify-between gap-4">
-      <div>
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-200">Active module</p>
-        <h1 className="mt-2 text-2xl font-bold sm:text-3xl">Price Prediction Module</h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-indigo-100/90">
-          Forecast unit prices from order parameters and get AI-powered expert suggestions with live market context.
-        </p>
-      </div>
-      <button
-        type="button"
-        onClick={onBack}
-        className="shrink-0 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
-      >
-        ← Back to home
-      </button>
-    </div>
-  </motion.div>
 );
 
 export const PredictionWorkspace: React.FC = () => {
@@ -212,18 +181,13 @@ export const PredictionWorkspace: React.FC = () => {
         ) : (
           <motion.div
             key="prediction"
-            className="mx-auto w-full max-w-6xl"
+            className="mx-auto w-full"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16, transition: { duration: 0.25 } }}
             transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] as const }}
           >
-            <PredictForm
-              moduleBanner={<PredictionModuleBanner onBack={goToLanding} />}
-            />
-            <section className="mt-16 w-full border-t border-white/50 pt-10 pb-8">
-              <McpShowcase />
-            </section>
+            <PredictForm onBack={goToLanding} onGettingStarted={goToLanding} />
           </motion.div>
         )}
 

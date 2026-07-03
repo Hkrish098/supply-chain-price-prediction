@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export type McpInfo = {
@@ -10,6 +10,7 @@ export type McpInfo = {
   tagline: string;
   gradient: string;
   details: {
+    overview: string;
     description: string;
     provider: string;
     usedIn: string;
@@ -26,6 +27,8 @@ export const MCP_ITEMS: McpInfo[] = [
     tagline: "Open-Meteo forecasts",
     gradient: "from-sky-400 to-blue-600",
     details: {
+      overview:
+        "Open-Meteo is a free weather service that provides forecasts for any location worldwide without needing an API key. Model Context Protocol (MCP) is a standard that lets AI applications connect to external tools and data sources. Together, they bring live weather conditions into supply chain planning.",
       description:
         "Fetches real-time weather and 7-day forecasts via Open-Meteo geocoding and forecast APIs. Calculates a supply-chain impact factor from temperature, precipitation, and wind to inform pricing and logistics recommendations.",
       provider: "Open-Meteo (free, no API key)",
@@ -45,6 +48,8 @@ export const MCP_ITEMS: McpInfo[] = [
     tagline: "Supply chain headlines",
     gradient: "from-amber-400 to-orange-500",
     details: {
+      overview:
+        "NewsAPI collects headlines from thousands of news publishers around the world. MCP gives AI systems a structured way to search and read those headlines on demand. This keeps predictions aware of breaking supply chain and market news.",
       description:
         "Pulls recent headlines about supply chain, logistics, and product categories from NewsAPI. Headlines are injected into the Groq LLM prompt so expert suggestions reflect current market events.",
       provider: "NewsAPI",
@@ -64,6 +69,8 @@ export const MCP_ITEMS: McpInfo[] = [
     tagline: "Commodity & market data",
     gradient: "from-emerald-400 to-teal-600",
     details: {
+      overview:
+        "yfinance is a Python library that pulls live stock and commodity prices from Yahoo Finance. MCP wraps this data so AI tools can query market prices in a consistent format. Crude oil and commodity trends help estimate freight and material costs.",
       description:
         "Tracks live commodity prices via yfinance — notably WTI crude oil (CL=F) as a freight-cost proxy. Market moves are passed to the AI layer to contextualize shipping and margin recommendations.",
       provider: "yfinance (Yahoo Finance)",
@@ -83,6 +90,8 @@ export const MCP_ITEMS: McpInfo[] = [
     tagline: "Expert AI suggestions",
     gradient: "from-violet-500 to-indigo-600",
     details: {
+      overview:
+        "Groq runs large language models (LLMs) on specialized chips for extremely fast inference. Llama 3.3 is Meta's open-source AI model trained to understand and generate human-like text. This powers the expert suggestions panel after you generate a prediction.",
       description:
         "Combines ML predictions with MCP-gathered weather, news, and finance context to generate actionable expert recommendations via llama-3.3-70b-versatile. Each suggestion tags its data sources.",
       provider: "Groq API",
@@ -102,6 +111,8 @@ export const MCP_ITEMS: McpInfo[] = [
     tagline: "Price forecasting",
     gradient: "from-fuchsia-500 to-purple-600",
     details: {
+      overview:
+        "Machine learning learns patterns from historical data to predict future unit prices. Random Forest is a reliable algorithm that handles both numbers and categories like shipping mode or product type. Our model was trained on 8,300+ retail supply chain records.",
       description:
         "Scikit-learn pipeline with tuned Random Forest regression (R² 0.85, RMSE $26.19) trained on 8,300+ retail records. Serves real-time unit price predictions through FastAPI.",
       provider: "scikit-learn · XGBoost · joblib",
@@ -116,27 +127,20 @@ export const MCP_ITEMS: McpInfo[] = [
   },
 ];
 
-const McpCard = ({
-  mcp,
-  onClick,
-}: {
-  mcp: McpInfo;
-  onClick: () => void;
-}) => (
-  <button
-    type="button"
-    onClick={onClick}
-    className="group mcp-marquee-card flex w-[148px] shrink-0 flex-col items-center gap-2 rounded-2xl border border-white/70 bg-white/80 p-4 shadow-md shadow-indigo-100/50 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-indigo-200 hover:shadow-lg hover:shadow-indigo-200/60"
-  >
-    <div
-      className={`flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br ${mcp.gradient} text-2xl shadow-lg transition-transform duration-300 group-hover:scale-110`}
-    >
-      {mcp.icon}
-    </div>
-    <span className="text-center text-xs font-bold text-slate-800">{mcp.name}</span>
-    <span className="text-center text-[10px] leading-tight text-slate-400">{mcp.tagline}</span>
-  </button>
-);
+const slideVariants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? 80 : -80,
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (direction: number) => ({
+    x: direction > 0 ? -80 : 80,
+    opacity: 0,
+  }),
+};
 
 const McpDetailModal = ({
   mcp,
@@ -188,7 +192,16 @@ const McpDetailModal = ({
           </button>
         </div>
 
-        <p className="mt-4 text-sm leading-6 text-slate-600">{mcp.details.description}</p>
+        <div className="mt-4 space-y-4">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">What it is</p>
+            <p className="mt-1.5 text-sm leading-6 text-slate-600">{mcp.details.overview}</p>
+          </div>
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">How we use it</p>
+            <p className="mt-1.5 text-sm leading-6 text-slate-600">{mcp.details.description}</p>
+          </div>
+        </div>
 
         <dl className="mt-5 space-y-3 rounded-xl border border-slate-100 bg-slate-50/80 p-4 text-sm">
           <div>
@@ -218,27 +231,148 @@ const McpDetailModal = ({
   </motion.div>
 );
 
-export const McpShowcase: React.FC = () => {
+export const McpShowcase: React.FC<{ variant?: "standalone" | "embedded" }> = ({
+  variant = "standalone",
+}) => {
   const [selected, setSelected] = useState<McpInfo | null>(null);
-  const loop = [...MCP_ITEMS, ...MCP_ITEMS];
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [direction, setDirection] = useState(1);
+  const [paused, setPaused] = useState(false);
 
-  return (
-    <section className="w-full" aria-label="MCP integrations showcase">
-      <p className="mb-4 text-center text-[11px] font-bold uppercase tracking-[0.18em] text-slate-400">
-        Powered by MCP integrations
-      </p>
+  const goTo = (index: number, dir?: number) => {
+    const nextIndex = (index + MCP_ITEMS.length) % MCP_ITEMS.length;
+    if (nextIndex === activeIndex) return;
+    if (dir !== undefined) {
+      setDirection(dir);
+    } else {
+      const forward = (nextIndex - activeIndex + MCP_ITEMS.length) % MCP_ITEMS.length;
+      setDirection(forward <= MCP_ITEMS.length / 2 ? 1 : -1);
+    }
+    setActiveIndex(nextIndex);
+  };
 
-      <div className="mcp-marquee-mask relative overflow-hidden py-2">
-        <div className="mcp-marquee-track flex w-max gap-4">
-          {loop.map((mcp, i) => (
-            <McpCard key={`${mcp.id}-${i}`} mcp={mcp} onClick={() => setSelected(mcp)} />
+  useEffect(() => {
+    if (paused || selected) return;
+    const timer = window.setInterval(() => {
+      setDirection(1);
+      setActiveIndex((i) => (i + 1) % MCP_ITEMS.length);
+    }, 3000);
+    return () => window.clearInterval(timer);
+  }, [paused, selected]);
+
+  const current = MCP_ITEMS[activeIndex];
+  const isEmbedded = variant === "embedded";
+
+  const slideContent = (
+    <>
+      <div className={`relative overflow-hidden ${isEmbedded ? "min-h-[140px]" : "min-h-[88px]"}`}>
+        <AnimatePresence mode="wait" custom={direction}>
+          <motion.button
+            key={current.id}
+            type="button"
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] as const }}
+            onClick={() => setSelected(current)}
+            className={`group flex w-full text-left transition hover:opacity-95 ${
+              isEmbedded
+                ? "flex-col items-start gap-4 rounded-2xl border border-white/60 bg-white/95 p-6 shadow-lg"
+                : "items-center gap-5"
+            }`}
+          >
+            <div className="flex w-full items-start gap-4">
+              <div
+                className={`flex shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${current.gradient} shadow-lg transition-transform duration-300 group-hover:scale-105 ${
+                  isEmbedded ? "h-14 w-14 text-2xl" : "h-16 w-16 text-3xl"
+                }`}
+              >
+                {current.icon}
+              </div>
+              <div className="min-w-0 flex-1">
+                <h3
+                  className={`font-bold text-slate-900 ${isEmbedded ? "text-lg" : "text-xl sm:text-2xl"}`}
+                >
+                  {current.name}
+                </h3>
+                <p className="mt-1 text-sm font-medium text-indigo-600">{current.tagline}</p>
+              </div>
+              <span className="hidden shrink-0 text-sm font-semibold text-indigo-500 sm:inline">
+                Learn more →
+              </span>
+            </div>
+            <p className={`text-sm leading-6 text-slate-500 ${isEmbedded ? "line-clamp-3" : "line-clamp-2"}`}>
+              {current.details.overview}
+            </p>
+          </motion.button>
+        </AnimatePresence>
+      </div>
+
+      <div className={`relative flex justify-center ${isEmbedded ? "mt-4" : "mt-5"}`}>
+        <div className="flex items-center gap-2">
+          {MCP_ITEMS.map((mcp, i) => (
+            <button
+              key={mcp.id}
+              type="button"
+              aria-label={`Show ${mcp.name}`}
+              onClick={() => goTo(i)}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                i === activeIndex
+                  ? `w-6 ${isEmbedded ? "bg-white" : "bg-indigo-500"}`
+                  : `w-2 ${isEmbedded ? "bg-white/40 hover:bg-white/60" : "bg-slate-300 hover:bg-slate-400"}`
+              }`}
+            />
           ))}
         </div>
       </div>
 
-      <p className="mt-3 text-center text-xs text-slate-400">
-        Click any card to see how it&apos;s used in this project
+      <p className={`mt-3 text-xs ${isEmbedded ? "text-indigo-100/80" : "text-slate-400"}`}>
+        Click the card to learn what each integration is and how it powers this app
       </p>
+    </>
+  );
+
+  if (isEmbedded) {
+    return (
+      <div
+        className="flex shrink-0 flex-col"
+        aria-label="MCP integrations showcase"
+        aria-live="polite"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+      >
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-100">
+          Powered by MCP integrations
+        </p>
+        <div className="mt-4 flex-1">{slideContent}</div>
+        <AnimatePresence>
+          {selected && <McpDetailModal mcp={selected} onClose={() => setSelected(null)} />}
+        </AnimatePresence>
+      </div>
+    );
+  }
+
+  return (
+    <section
+      className="w-full"
+      aria-label="MCP integrations showcase"
+      aria-live="polite"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      <div className="relative overflow-hidden rounded-2xl border border-white/60 bg-white/70 p-8 shadow-2xl shadow-indigo-200/30 backdrop-blur-md">
+        <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-indigo-100/40 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-8 left-24 h-32 w-32 rounded-full bg-violet-100/30 blur-2xl" />
+
+        <div className="relative">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-500">
+            Powered by MCP integrations
+          </p>
+          <div className="mt-4">{slideContent}</div>
+        </div>
+      </div>
 
       <AnimatePresence>
         {selected && <McpDetailModal mcp={selected} onClose={() => setSelected(null)} />}

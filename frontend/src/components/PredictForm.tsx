@@ -1,10 +1,9 @@
 "use client";
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { predict, getExpertSuggestions } from '@/services/api';
 import type { PredictRequest } from '@/types';
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
+import McpShowcase from '@/components/McpShowcase';
 
 const PredictionSkeleton = () => (
   <motion.div
@@ -91,12 +90,12 @@ const SuggestionCard: React.FC<SuggestionCardProps> = ({
       type="button"
       onClick={onToggle}
       aria-expanded={isExpanded}
-      className="w-full text-left px-6 py-5"
+      className="w-full px-4 py-3.5 text-left"
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1">
-          <p className="text-sm font-bold text-slate-900">{item.title}</p>
-          <div className="mt-3 flex flex-wrap gap-2">
+          <p className="text-sm font-bold leading-snug text-slate-900">{item.title}</p>
+          <div className="mt-2 flex flex-wrap gap-1.5">
             {item.sourceTags.map((tag) => (
               <motion.span
                 key={tag}
@@ -122,7 +121,7 @@ const SuggestionCard: React.FC<SuggestionCardProps> = ({
     <AnimatePresence>
       {isExpanded && item.detail && (
         <motion.div
-          className="border-t border-slate-200/50 bg-gradient-to-br from-slate-50/50 to-indigo-50/30 px-6 py-5"
+          className="border-t border-slate-200/50 bg-gradient-to-br from-slate-50/50 to-indigo-50/30 px-4 py-3.5"
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
@@ -164,7 +163,10 @@ type PredictFormState = {
   order_priority: (typeof orderPriorities)[number];
 };
 
-export const PredictForm: React.FC<{ moduleBanner?: React.ReactNode }> = ({ moduleBanner }) => {
+export const PredictForm: React.FC<{
+  onBack?: () => void;
+  onGettingStarted?: () => void;
+}> = ({ onBack, onGettingStarted }) => {
   const [form, setForm] = useState<PredictFormState>({
     order_quantity: '',
     discount: '',
@@ -356,421 +358,346 @@ export const PredictForm: React.FC<{ moduleBanner?: React.ReactNode }> = ({ modu
   }, [expertResult]);
 
   return (
-    <div id="predict" className="grid gap-6 lg:grid-cols-[1fr_360px] lg:items-start h-full">
-      {/* LEFT PANEL: module banner + control center */}
+    <div id="predict" className="mx-auto w-full space-y-8">
+      {/* Hero: consolidated prediction + integrations */}
       <motion.div
-        className="w-full space-y-6"
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
+        className="relative w-full overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-700 p-8 shadow-2xl shadow-indigo-600/30"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        {moduleBanner}
-        <Card className="w-full rounded-2xl border border-white/60 bg-white/70 shadow-2xl shadow-indigo-200/30 backdrop-blur-md p-0 overflow-hidden">
-          {/* Header Section */}
-          <div className="border-b border-white/50 bg-gradient-to-r from-indigo-50/60 to-violet-50/60 backdrop-blur-sm px-8 py-6">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-indigo-600">Control Center</p>
-                <h2 className="mt-1.5 text-2xl font-bold tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-                  Quick Predict
-                </h2>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
-                  Input your supply chain parameters to generate a price forecast. Expert AI suggestions appear in the right panel.
-                </p>
-              </div>
-            </motion.div>
-          </div>
+        <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full bg-white/10 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-8 left-24 h-32 w-32 rounded-full bg-violet-400/20 blur-2xl" />
 
-          {/* Form Section */}
-          <form onSubmit={submit} className="p-8">
-            {/* Input Grid - Strict 2-Column Layout */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-              {/* Order Quantity */}
-              <motion.div
-                className="flex flex-col"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
+        <div className="relative">
+          {onBack && (
+            <div className="mb-6 flex justify-end">
+              <button
+                type="button"
+                onClick={onBack}
+                className="shrink-0 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
               >
-                <label className="mb-3 block text-sm font-semibold text-slate-700">Order Quantity</label>
-                <input
-                  type="number"
-                  min={1}
-                  value={form.order_quantity}
-                  placeholder="e.g. 12"
-                  onChange={(e) => handleChange('order_quantity', e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                />
-              </motion.div>
-
-              {/* Discount */}
-              <motion.div
-                className="flex flex-col"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15 }}
-              >
-                <label className="mb-3 block text-sm font-semibold text-slate-700">Discount Rate</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={form.discount}
-                  placeholder="e.g. 0.05"
-                  onChange={(e) => handleChange('discount', e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                />
-              </motion.div>
-
-              {/* Shipping Cost */}
-              <motion.div
-                className="flex flex-col"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                <label className="mb-3 block text-sm font-semibold text-slate-700">Shipping Cost</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={form.shipping_cost}
-                  placeholder="e.g. 35"
-                  onChange={(e) => handleChange('shipping_cost', e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                />
-              </motion.div>
-
-              {/* Product Margin */}
-              <motion.div
-                className="flex flex-col"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.25 }}
-              >
-                <label className="mb-3 block text-sm font-semibold text-slate-700">Product Margin</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={form.product_base_margin}
-                  placeholder="e.g. 0.50"
-                  onChange={(e) => handleChange('product_base_margin', e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                />
-              </motion.div>
-
-              {/* Category */}
-              <motion.div
-                className="flex flex-col"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                <label className="mb-3 block text-sm font-semibold text-slate-700">Category</label>
-                <select
-                  value={form.product_category}
-                  onChange={(e) => handleChange('product_category', e.target.value as PredictFormState['product_category'])}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                >
-                  {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-              </motion.div>
-
-              {/* Month */}
-              <motion.div
-                className="flex flex-col"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.35 }}
-              >
-                <label className="mb-3 block text-sm font-semibold text-slate-700">Month</label>
-                <select
-                  value={form.month}
-                  onChange={(e) => handleChange('month', Number(e.target.value))}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                >
-                  {months.map((month) => (
-                    <option key={month.value} value={month.value}>
-                      {month.label}
-                    </option>
-                  ))}
-                </select>
-              </motion.div>
-
-              {/* Ship Mode */}
-              <motion.div
-                className="flex flex-col"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-              >
-                <label className="mb-3 block text-sm font-semibold text-slate-700">Shipping Mode</label>
-                <select
-                  value={form.ship_mode}
-                  onChange={(e) => handleChange('ship_mode', e.target.value as PredictFormState['ship_mode'])}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                >
-                  {shipModes.map((mode) => (
-                    <option key={mode} value={mode}>
-                      {mode}
-                    </option>
-                  ))}
-                </select>
-              </motion.div>
-
-              {/* Order Priority */}
-              <motion.div
-                className="flex flex-col"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.45 }}
-              >
-                <label className="mb-3 block text-sm font-semibold text-slate-700">Order Priority</label>
-                <select
-                  value={form.order_priority}
-                  onChange={(e) => handleChange('order_priority', e.target.value as PredictFormState['order_priority'])}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                >
-                  {orderPriorities.map((priority) => (
-                    <option key={priority} value={priority}>
-                      {priority}
-                    </option>
-                  ))}
-                </select>
-              </motion.div>
+                ← Back to home
+              </button>
             </div>
+          )}
 
-            {/* Button Group */}
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between pt-2 border-t border-slate-200/50">
-              <motion.div
-                className="pt-4"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-              >
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="inline-flex items-center justify-center rounded-xl px-6 py-3 text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-violet-600 shadow-lg shadow-indigo-500/30 transition hover:shadow-indigo-500/50 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {loading ? (
-                    <>
-                      <motion.span
-                        className="inline-block mr-2"
-                        animate={{ rotate: 360 }}
-                        transition={{ repeat: Infinity, duration: 1 }}
-                      >
-                        ⚡
-                      </motion.span>
-                      Predicting…
-                    </>
-                  ) : (
-                    '⚡ Generate Prediction'
-                  )}
-                </button>
-              </motion.div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-200">Active module</p>
+          <h1 className="mt-2 text-2xl font-bold text-white sm:text-3xl">
+            AI Integration &amp; Prediction Module
+          </h1>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-indigo-100/90">
+            Forecast unit prices from order parameters and get AI-powered expert suggestions with live market context.
+          </p>
 
-              {prediction !== null && (
-                <motion.button
-                  type="button"
-                  onClick={loadExpertSuggestions}
-                  disabled={expertLoading}
-                  className="inline-flex items-center justify-center rounded-xl border-2 border-indigo-200 bg-white px-6 py-3 text-sm font-bold text-indigo-600 transition hover:bg-indigo-50 disabled:cursor-not-allowed disabled:opacity-60"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {expertLoading ? (
-                    <>
-                      <motion.span
-                        className="inline-block mr-2"
-                        animate={{ rotate: 360 }}
-                        transition={{ repeat: Infinity, duration: 1 }}
-                      >
-                        🤖
-                      </motion.span>
-                      Expert Advice…
-                    </>
-                  ) : (
-                    '🤖 Get Expert Suggestions'
-                  )}
-                </motion.button>
-              )}
-            </div>
+          <div className="mt-8 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-stretch">
+            {/* Left: Quick Predict form */}
+            <div className="rounded-2xl border border-white/20 bg-white/10 p-6 backdrop-blur-sm sm:p-8">
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-indigo-100">Quick Predict</p>
+              <h2 className="mt-1.5 text-lg font-bold text-white">Enter order details</h2>
 
-            {/* Error Message */}
-            <AnimatePresence>
-              {error && (
-                <motion.div
-                  className="mt-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm"
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                >
-                  {error}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </form>
-
-          {/* Prediction Result */}
-          <AnimatePresence>
-            {loading && (
-              <motion.div className="px-8 pb-8">
-                <PredictionSkeleton />
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <AnimatePresence>
-            {!loading && prediction !== null && (
-              <motion.div
-                className="px-8 pb-8"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.4 }}
-              >
-                <div className="rounded-2xl border border-indigo-200/50 bg-gradient-to-br from-indigo-50/80 via-violet-50/50 to-indigo-50/80 backdrop-blur-sm px-8 py-8 shadow-lg shadow-indigo-200/20">
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
-                    <p className="text-xs uppercase tracking-widest font-bold text-indigo-700">Predicted Unit Price</p>
-                    <motion.p
-                      className="mt-4 text-6xl font-bold text-slate-900"
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ type: 'spring', stiffness: 200 }}
+              <form onSubmit={submit} className="mt-6">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="flex flex-col">
+                    <label className="mb-2 block text-xs font-semibold text-indigo-100">Order Quantity</label>
+                    <input
+                      type="number"
+                      min={1}
+                      value={form.order_quantity}
+                      placeholder="e.g. 12"
+                      onChange={(e) => handleChange('order_quantity', e.target.value)}
+                      className="w-full rounded-xl border border-white/30 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 transition focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="mb-2 block text-xs font-semibold text-indigo-100">Discount Rate</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={form.discount}
+                      placeholder="e.g. 0.05"
+                      onChange={(e) => handleChange('discount', e.target.value)}
+                      className="w-full rounded-xl border border-white/30 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 transition focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="mb-2 block text-xs font-semibold text-indigo-100">Shipping Cost</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={form.shipping_cost}
+                      placeholder="e.g. 35"
+                      onChange={(e) => handleChange('shipping_cost', e.target.value)}
+                      className="w-full rounded-xl border border-white/30 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 transition focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="mb-2 block text-xs font-semibold text-indigo-100">Product Margin</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={form.product_base_margin}
+                      placeholder="e.g. 0.50"
+                      onChange={(e) => handleChange('product_base_margin', e.target.value)}
+                      className="w-full rounded-xl border border-white/30 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 transition focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="mb-2 block text-xs font-semibold text-indigo-100">Category</label>
+                    <select
+                      value={form.product_category}
+                      onChange={(e) => handleChange('product_category', e.target.value as PredictFormState['product_category'])}
+                      className="w-full rounded-xl border border-white/30 bg-white px-4 py-2.5 text-sm text-slate-900 transition focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200"
                     >
-                      ${prediction.toFixed(2)}
-                    </motion.p>
-                    <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-700">
-                      This prediction is based on your input parameters. Review expert suggestions in the right panel for actionable insights.
-                    </p>
-                  </motion.div>
+                      {categories.map((category) => (
+                        <option key={category} value={category}>
+                          {category}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="mb-2 block text-xs font-semibold text-indigo-100">Month</label>
+                    <select
+                      value={form.month}
+                      onChange={(e) => handleChange('month', Number(e.target.value))}
+                      className="w-full rounded-xl border border-white/30 bg-white px-4 py-2.5 text-sm text-slate-900 transition focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                    >
+                      {months.map((month) => (
+                        <option key={month.value} value={month.value}>
+                          {month.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="mb-2 block text-xs font-semibold text-indigo-100">Shipping Mode</label>
+                    <select
+                      value={form.ship_mode}
+                      onChange={(e) => handleChange('ship_mode', e.target.value as PredictFormState['ship_mode'])}
+                      className="w-full rounded-xl border border-white/30 bg-white px-4 py-2.5 text-sm text-slate-900 transition focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                    >
+                      {shipModes.map((mode) => (
+                        <option key={mode} value={mode}>
+                          {mode}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="mb-2 block text-xs font-semibold text-indigo-100">Order Priority</label>
+                    <select
+                      value={form.order_priority}
+                      onChange={(e) => handleChange('order_priority', e.target.value as PredictFormState['order_priority'])}
+                      className="w-full rounded-xl border border-white/30 bg-white px-4 py-2.5 text-sm text-slate-900 transition focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                    >
+                      {orderPriorities.map((priority) => (
+                        <option key={priority} value={priority}>
+                          {priority}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </Card>
+
+                <div className="mt-6 flex flex-col gap-3 border-t border-white/20 pt-6 sm:flex-row sm:items-center">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="inline-flex items-center justify-center rounded-xl bg-white px-6 py-3 text-sm font-bold text-indigo-700 shadow-lg transition hover:bg-indigo-50 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {loading ? (
+                      <>
+                        <motion.span
+                          className="mr-2 inline-block"
+                          animate={{ rotate: 360 }}
+                          transition={{ repeat: Infinity, duration: 1 }}
+                        >
+                          ⚡
+                        </motion.span>
+                        Predicting…
+                      </>
+                    ) : (
+                      '⚡ Generate Prediction'
+                    )}
+                  </button>
+
+                  {prediction !== null && (
+                    <button
+                      type="button"
+                      onClick={loadExpertSuggestions}
+                      disabled={expertLoading}
+                      className="inline-flex items-center justify-center rounded-xl border border-white/40 bg-white/10 px-6 py-3 text-sm font-bold text-white transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {expertLoading ? '🤖 Expert Advice…' : '🤖 Get Expert Suggestions'}
+                    </button>
+                  )}
+                </div>
+
+                <AnimatePresence>
+                  {error && (
+                    <motion.div
+                      className="mt-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                    >
+                      {error}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </form>
+
+              <AnimatePresence>
+                {loading && (
+                  <div className="mt-6">
+                    <PredictionSkeleton />
+                  </div>
+                )}
+              </AnimatePresence>
+
+              <AnimatePresence>
+                {!loading && prediction !== null && (
+                  <motion.div
+                    className="mt-6"
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 12 }}
+                  >
+                    <div className="rounded-2xl border border-white/30 bg-white/95 p-6 shadow-lg">
+                      <p className="text-xs font-bold uppercase tracking-widest text-indigo-700">Predicted Unit Price</p>
+                      <p className="mt-3 text-5xl font-bold text-slate-900">${prediction.toFixed(2)}</p>
+                      <p className="mt-3 text-sm leading-6 text-slate-600">
+                        Based on your inputs. Expert suggestions appear on the right.
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Right: MCP carousel + Expert Suggestions */}
+            <div className="flex min-h-0 flex-col gap-5 lg:h-full">
+              <McpShowcase variant="embedded" />
+
+              <div className="flex min-h-0 flex-1 flex-col rounded-2xl border border-white/20 bg-white/10 p-5 backdrop-blur-sm sm:p-6">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 text-sm text-white shadow-sm">
+                    🤖
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-indigo-100">
+                      Insights Zone
+                    </p>
+                    <h3 className="text-base font-bold text-white">Expert Suggestions</h3>
+                  </div>
+                </div>
+
+                <div className="mt-4 min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
+                  {expertLoading && <SuggestionsSkeleton />}
+
+                  <AnimatePresence>
+                    {expertError && (
+                      <motion.div
+                        className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                      >
+                        {expertError}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {!expertOpen && prediction === null && !expertLoading && (
+                    <div className="rounded-xl border border-white/30 bg-white/90 p-4 text-sm text-slate-600">
+                      Generate a prediction first to see expert suggestions.
+                    </div>
+                  )}
+
+                  {!expertOpen && prediction !== null && !expertLoading && !expertResult && (
+                    <div className="rounded-xl border border-white/30 bg-white/90 p-4 text-sm text-slate-700">
+                      Click &quot;Get Expert Suggestions&quot; in the form to load AI-driven insights here.
+                    </div>
+                  )}
+
+                  {!expertLoading && expertResult && (
+                    <AnimatePresence mode="wait">
+                      {expertResult.message && (
+                        <motion.div
+                          key="expert-message"
+                          className="rounded-xl border border-white/40 bg-white/95 px-4 py-4 text-sm leading-6 text-slate-700 shadow-sm"
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                        >
+                          {expertResult.message}
+                        </motion.div>
+                      )}
+
+                      <motion.div
+                        key="suggestions-list"
+                        className="space-y-2"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                      >
+                        {suggestionItems.map((item, index) => (
+                          <SuggestionCard
+                            key={`suggestion-${index}-${item.title}`}
+                            item={item}
+                            index={index}
+                            isExpanded={expandedIndex === index}
+                            onToggle={() =>
+                              setExpandedIndex(expandedIndex === index ? null : index)
+                            }
+                            getTagColorClasses={getTagColorClasses}
+                          />
+                        ))}
+                      </motion.div>
+
+                      {expertResult.summary && (
+                        <motion.div
+                          key="expert-summary"
+                          className="rounded-xl border border-white/40 bg-white/95 px-4 py-4 text-sm text-slate-700 shadow-sm"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                        >
+                          <p className="font-bold text-slate-900">Quick Summary</p>
+                          <p className="mt-2">{expertResult.summary}</p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </motion.div>
 
-      {/* RIGHT PANEL: Expressive Zone with Glassmorphism */}
+      {/* Getting Started */}
       <motion.section
-        className="flex flex-col gap-4 h-fit sticky top-24 max-h-[calc(100vh-140px)] overflow-y-auto scrollbar-thin scrollbar-thumb-indigo-300 scrollbar-track-slate-100"
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
+        className="w-full rounded-2xl border border-white/60 bg-white/70 p-8 shadow-xl shadow-indigo-100/30 backdrop-blur-md"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.15 }}
       >
-        {/* Suggestions Panel Header */}
-        <motion.div
-          className="rounded-2xl border border-white/60 bg-white/60 backdrop-blur-md p-5 shadow-xl shadow-indigo-100/30"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+        <h3 className="text-xl font-bold text-slate-900">Getting Started</h3>
+        <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-600">
+          This guide will help you get the most out of the Supply Chain Price Predictor. Complete the
+          quick intro on the home page, enter your order details above, and generate a forecast with
+          AI-powered expert suggestions backed by live weather, news, and market data.
+        </p>
+        <button
+          type="button"
+          onClick={onGettingStarted}
+          className="mt-6 inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-500/30 transition hover:shadow-indigo-500/50"
         >
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 text-sm text-white shadow-sm shadow-violet-500/30">
-              🤖
-            </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-500">Insights Zone</p>
-              <h3 className="text-base font-bold tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-                Expert Suggestions
-              </h3>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Suggestions Content */}
-        <motion.div className="space-y-4 flex-1 overflow-y-auto pr-2">
-          {expertLoading && <SuggestionsSkeleton />}
-
-          <AnimatePresence>
-            {expertError && (
-              <motion.div
-                className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-              >
-                {expertError}
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {!expertOpen && prediction === null && !expertLoading && (
-            <motion.div
-              className="rounded-2xl border border-slate-200/50 bg-gradient-to-br from-slate-50/80 to-slate-50/50 backdrop-blur-sm p-4 text-sm text-slate-700"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              Generate a prediction first to see expert suggestions.
-            </motion.div>
-          )}
-
-          {!expertOpen && prediction !== null && !expertLoading && !expertResult && (
-            <motion.div
-              className="rounded-2xl border border-slate-200/50 bg-gradient-to-br from-indigo-50/80 to-indigo-50/50 backdrop-blur-sm p-4 text-sm text-slate-700"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              Click "Get Expert Suggestions" to populate this panel with AI-driven insights.
-            </motion.div>
-          )}
-
-          {!expertLoading && expertResult && (
-            <AnimatePresence mode="wait">
-              {expertResult.message && (
-                <motion.div
-                  key="expert-message"
-                  className="rounded-2xl border border-slate-200/50 bg-white/60 backdrop-blur-sm px-6 py-5 text-sm leading-6 text-slate-700 shadow-lg shadow-slate-200/10"
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {expertResult.message}
-                </motion.div>
-              )}
-
-              <motion.div
-                key="suggestions-list"
-                className="space-y-3"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                {suggestionItems.map((item, index) => (
-                  <SuggestionCard
-                    key={`suggestion-${index}-${item.title}`}
-                    item={item}
-                    index={index}
-                    isExpanded={expandedIndex === index}
-                    onToggle={() => setExpandedIndex(expandedIndex === index ? null : index)}
-                    getTagColorClasses={getTagColorClasses}
-                  />
-                ))}
-              </motion.div>
-
-              {expertResult.summary && (
-                <motion.div
-                  key="expert-summary"
-                  className="mt-4 rounded-2xl border border-slate-200/50 bg-gradient-to-br from-slate-50/80 to-slate-50/50 backdrop-blur-sm px-6 py-5 text-sm text-slate-700 shadow-lg shadow-slate-200/10"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <p className="font-bold text-slate-900">Quick Summary</p>
-                  <p className="mt-2">{expertResult.summary}</p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          )}
-        </motion.div>
+          Getting Started
+        </button>
+        <p className="mt-4 text-xs text-slate-400">
+          Returns you to the home intro so you can replay the walkthrough anytime.
+        </p>
       </motion.section>
     </div>
   );

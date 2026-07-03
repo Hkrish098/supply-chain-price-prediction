@@ -106,34 +106,3 @@ button {
 html {
   overflow-y: scroll;
 }
-
-/* ── MCP marquee (infinite scroll) ── */
-@keyframes mcp-marquee {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-.mcp-marquee-track {
-  animation: mcp-marquee 32s linear infinite;
-}
-
-.mcp-marquee-track:hover {
-  animation-play-state: paused;
-}
-
-.mcp-marquee-mask {
-  mask-image: linear-gradient(
-    to right,
-    transparent,
-    black 8%,
-    black 92%,
-    transparent
-  );
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent,
-    black 8%,
-    black 92%,
-    transparent
-  );
-}
