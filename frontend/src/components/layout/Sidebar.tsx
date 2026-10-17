@@ -158,20 +158,20 @@ export const Sidebar: React.FC<Props> = ({ onClose, className }) => {
   };
 
   return (
-    <aside className={`${wrapperClass} sticky top-24 self-start`}>
-      <div className="flex h-[calc(100vh-120px)] max-h-[calc(100vh-120px)] w-full flex-col overflow-hidden rounded-2xl border border-white/60 bg-white/60 shadow-xl shadow-slate-200/30 backdrop-blur-md">
+    <aside className={`${wrapperClass} self-start`}>
+      <div className="flex h-[calc(100vh-120px)] max-h-[calc(100vh-120px)] w-full flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
         <div className="flex items-center justify-between px-3 py-3">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-sm text-white">
-              📦
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-sm text-white">
+              PI
             </div>
-            <span className="text-sm font-semibold text-slate-800">SC Predictor</span>
+            <span className="text-sm font-semibold text-stone-800">Procurement Intel</span>
           </div>
           {onClose && (
             <button
               onClick={onClose}
               aria-label="Close sidebar"
-              className="rounded-md px-2 py-1 text-slate-500 hover:bg-slate-200/60"
+              className="rounded-md px-2 py-1 text-stone-500 hover:bg-stone-200/60"
             >
               ✕
             </button>
@@ -182,7 +182,7 @@ export const Sidebar: React.FC<Props> = ({ onClose, className }) => {
           <button
             type="button"
             onClick={handleNewPrediction}
-            className="flex w-full items-center gap-2 rounded-xl border border-slate-200/80 bg-white px-3 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50"
+            className="flex w-full items-center gap-2 rounded-xl border border-stone-200/80 bg-white px-3 py-2.5 text-sm font-medium text-stone-700 shadow-sm transition hover:bg-stone-50"
           >
             <span className="text-base leading-none">+</span>
             New prediction
@@ -190,19 +190,19 @@ export const Sidebar: React.FC<Props> = ({ onClose, className }) => {
           <button
             type="button"
             onClick={handleReplayIntro}
-            className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-200/50 hover:text-slate-700"
+            className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-stone-500 transition hover:bg-stone-200/50 hover:text-stone-700"
           >
             ↺ See intro again
           </button>
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-2 py-1" ref={menuRef}>
-          <p className="px-2 py-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+          <p className="px-2 py-2 text-[11px] font-semibold uppercase tracking-wider text-stone-400">
             Recent
           </p>
           {sortedHistory.length === 0 ? (
-            <p className="px-2 py-3 text-xs leading-5 text-slate-500">
-              No predictions yet. Start a new chat to forecast a price.
+            <p className="px-2 py-3 text-xs leading-5 text-stone-500">
+              No predictions yet. Start a new forecast to estimate a price.
             </p>
           ) : (
             <ul className="space-y-0.5">
@@ -214,8 +214,8 @@ export const Sidebar: React.FC<Props> = ({ onClose, className }) => {
                 return (
                   <li key={key} className="relative">
                     <div
-                      className={`group flex items-center rounded-lg transition hover:bg-slate-200/50 ${
-                        isPinned ? 'bg-indigo-50/60' : ''
+                      className={`group flex items-center rounded-lg transition hover:bg-stone-200/50 ${
+                        isPinned ? 'bg-brand-50/60' : ''
                       }`}
                     >
                       <button
@@ -223,15 +223,15 @@ export const Sidebar: React.FC<Props> = ({ onClose, className }) => {
                         onClick={() => handleHistoryClick(item)}
                         className="flex min-w-0 flex-1 flex-col px-3 py-2.5 text-left"
                       >
-                        <span className="flex items-center gap-1 truncate text-sm text-slate-700 group-hover:text-slate-900">
+                        <span className="flex items-center gap-1 truncate text-sm text-stone-700 group-hover:text-stone-900">
                           {isPinned && (
-                            <span className="shrink-0 text-[10px] text-indigo-500" title="Pinned">
+                            <span className="shrink-0 text-[10px] text-brand-500" title="Pinned">
                               📌
                             </span>
                           )}
                           ${item.predicted_unit_price.toFixed(2)} · {item.request.product_category}
                         </span>
-                        <span className="mt-0.5 truncate text-[11px] text-slate-400">
+                        <span className="mt-0.5 truncate text-[11px] text-stone-400">
                           {item.request.order_priority} priority ·{' '}
                           {ts ? new Date(ts).toLocaleDateString() : '—'}
                         </span>
@@ -245,18 +245,18 @@ export const Sidebar: React.FC<Props> = ({ onClose, className }) => {
                             e.stopPropagation();
                             setOpenMenuKey(openMenuKey === key ? null : key);
                           }}
-                          className="rounded-md px-2 py-1 text-slate-400 opacity-0 transition hover:bg-slate-200/70 hover:text-slate-600 group-hover:opacity-100 data-[open=true]:opacity-100"
+                          className="rounded-md px-2 py-1 text-stone-400 opacity-0 transition hover:bg-stone-200/70 hover:text-stone-600 group-hover:opacity-100 data-[open=true]:opacity-100"
                           data-open={openMenuKey === key}
                         >
                           ⋯
                         </button>
 
                         {openMenuKey === key && (
-                          <div className="absolute right-0 top-full z-20 mt-0.5 min-w-[120px] overflow-hidden rounded-lg border border-slate-200/80 bg-white py-1 shadow-lg shadow-slate-200/40">
+                          <div className="absolute right-0 top-full z-20 mt-0.5 min-w-[120px] overflow-hidden rounded-lg border border-stone-200/80 bg-white py-1 shadow-sm">
                             <button
                               type="button"
                               onClick={() => togglePin(key)}
-                              className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-medium text-slate-700 hover:bg-slate-50"
+                              className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-medium text-stone-700 hover:bg-stone-50"
                             >
                               {isPinned ? '📌 Unpin' : '📌 Pin'}
                             </button>
@@ -278,18 +278,18 @@ export const Sidebar: React.FC<Props> = ({ onClose, className }) => {
           )}
         </div>
 
-        <div className="border-t border-slate-200/80 p-3">
+        <div className="border-t border-stone-200/80 p-3">
           {userEmail ? (
             <div className="flex items-center gap-2 rounded-lg px-2 py-2">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-xs font-bold text-brand-700">
                 {userEmail[0]?.toUpperCase()}
               </div>
-              <span className="truncate text-xs text-slate-600">{userEmail}</span>
+              <span className="truncate text-xs text-stone-600">{userEmail}</span>
             </div>
           ) : (
             <Link
               href="/login"
-              className="flex w-full items-center justify-center rounded-xl bg-indigo-600 px-3 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-700"
+              className="flex w-full items-center justify-center rounded-xl bg-brand-600 px-3 py-2.5 text-sm font-medium text-white transition hover:bg-brand-700"
             >
               Log in
             </Link>

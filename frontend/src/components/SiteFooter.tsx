@@ -10,14 +10,14 @@ const FOOTER_LINKS = [
 ];
 
 export const SiteFooter: React.FC = () => (
-  <footer className="mt-16 w-full border-t border-white/50 pt-10 pb-8">
+  <footer className="mt-8 w-full border-t border-stone-200 pt-6 pb-4">
     <div className="mx-auto flex max-w-4xl flex-col items-center gap-6 sm:flex-row sm:justify-between">
       <div className="text-center sm:text-left">
-        <p className="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-lg font-bold text-transparent">
-          Supply Chain Control Center
+        <p className="text-brand-800 text-lg font-bold ">
+          Procurement Intelligence Module
         </p>
-        <p className="mt-1 text-xs text-slate-400">
-          ML price forecasting · MCP market context · Groq expert AI
+        <p className="mt-1 text-xs text-stone-400">
+          Price forecasts · Market context · Purchasing decisions
         </p>
       </div>
 
@@ -28,7 +28,7 @@ export const SiteFooter: React.FC = () => (
             href={link.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-medium text-slate-500 transition hover:text-indigo-600"
+            className="text-sm font-medium text-stone-500 transition hover:text-brand-600"
           >
             {link.label}
           </a>
@@ -36,8 +36,8 @@ export const SiteFooter: React.FC = () => (
       </nav>
     </div>
 
-    <p className="mt-6 text-center text-[11px] text-slate-400">
-      © {new Date().getFullYear()} Supply Chain Price Prediction · Built with Next.js &amp; FastAPI
+    <p className="mt-6 text-center text-[11px] text-stone-400">
+      © {new Date().getFullYear()} Procurement Intelligence Module
     </p>
   </footer>
 );

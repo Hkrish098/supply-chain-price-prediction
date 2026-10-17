@@ -5,7 +5,7 @@ import PredictionWorkspace from '@/components/PredictionWorkspace';
 export default function DashboardPage() {
   return (
     <motion.main
-      className="min-h-[calc(100vh-88px)] flex items-stretch justify-center px-4 py-8 sm:px-6 lg:px-8"
+      className="w-full"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}

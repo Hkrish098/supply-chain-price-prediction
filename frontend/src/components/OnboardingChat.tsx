@@ -25,14 +25,14 @@ type Props = {
 };
 
 const GREETING_MESSAGE =
-  "Hi there! 👋 Before we dive in — do you know about supply chain?";
+  "Before we get started, are you familiar with procurement?";
 
 const TypingIndicator = () => (
   <div className="flex items-center gap-1 px-4 py-3">
     {[0, 1, 2].map((i) => (
       <motion.span
         key={i}
-        className="h-2 w-2 rounded-full bg-indigo-400"
+        className="h-2 w-2 rounded-full bg-brand-400"
         animate={{ opacity: [0.3, 1, 0.3], y: [0, -4, 0] }}
         transition={{ repeat: Infinity, duration: 1, delay: i * 0.15 }}
       />
@@ -58,8 +58,8 @@ const ActionButtons = ({
         onClick={() => onSelect(action.value)}
         className={`rounded-full px-4 py-2 text-sm font-semibold transition disabled:opacity-50 ${
           action.variant === 'primary'
-            ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20'
-            : 'border border-indigo-200 bg-white text-indigo-600 hover:bg-indigo-50'
+            ? 'bg-brand-700 text-white shadow-md'
+            : 'border border-brand-200 bg-white text-brand-600 hover:bg-brand-50'
         }`}
         whileHover={{ scale: 1.03 }}
         whileTap={{ scale: 0.97 }}
@@ -84,7 +84,7 @@ export const OnboardingChat: React.FC<Props> = ({ onComplete }) => {
   ]);
   const [phase, setPhase] = useState<Phase>('greeting');
   const [loading, setLoading] = useState(false);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const messagesRef = useRef<HTMLDivElement>(null);
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
 
@@ -109,7 +109,11 @@ export const OnboardingChat: React.FC<Props> = ({ onComplete }) => {
   }, []);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Scroll the conversation only, so new messages never move the page.
+    const container = messagesRef.current;
+    if (container) {
+      container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+    }
   }, [messages, loading]);
 
   const handleKnowledgeAnswer = async (messageId: string, knows: boolean) => {
@@ -133,7 +137,7 @@ export const OnboardingChat: React.FC<Props> = ({ onComplete }) => {
           ? 'Good to know! We focus on office supplies — a small set of essentials like printer paper, pens, and staplers. Fill in the form to get a price estimate, and we factor in live weather, news, and fuel costs so the tips match real conditions.'
           : 'Supply chain is simply getting products from a supplier to you on time. We handle office supplies only — about 2–3 essentials like paper, pens, and staplers. The form gives you a price estimate, informed by live weather, news, and shipping costs.',
       );
-      addBotMessage('Ready to try it? Open the Price Prediction module from the card below.', [
+      addBotMessage('Ready to try it? Open the price forecast from the card below.', [
         { label: "Yes, let's go!", value: 'start-form', variant: 'primary' },
       ]);
       setPhase('invite');
@@ -160,20 +164,20 @@ export const OnboardingChat: React.FC<Props> = ({ onComplete }) => {
   };
 
   return (
-    <div className="flex h-full min-h-[380px] max-h-[480px] flex-col overflow-hidden rounded-2xl">
-      <div className="shrink-0 border-b border-white/50 bg-white/60 px-5 py-3.5 backdrop-blur-sm">
+    <div className="flex h-[280px] sm:h-[300px] flex-col overflow-hidden rounded-2xl">
+      <div className="shrink-0 border-b border-stone-200 bg-white px-5 py-3.5">
         <div className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 text-sm text-white shadow-sm shadow-indigo-500/30">
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-700 text-sm text-white shadow-sm">
             💬
           </span>
           <div>
-            <h2 className="text-sm font-bold text-slate-900">Quick intro</h2>
-            <p className="text-[11px] text-slate-400">A short overview before you predict</p>
+            <h2 className="text-sm font-bold text-stone-900">Quick intro</h2>
+            <p className="text-[11px] text-stone-400">A short overview before you predict</p>
           </div>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-5 sm:px-6">
+      <div ref={messagesRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5 sm:px-6" role="log" aria-label="Introduction conversation" aria-live="polite">
         <div className="mx-auto max-w-2xl space-y-5">
           <AnimatePresence initial={false}>
             {messages.map((msg) => (
@@ -187,8 +191,8 @@ export const OnboardingChat: React.FC<Props> = ({ onComplete }) => {
                   <div
                     className={`inline-block rounded-2xl px-4 py-3 text-left text-sm leading-6 ${
                       msg.role === 'user'
-                        ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20'
-                        : 'border border-slate-200/60 bg-slate-50/90 text-slate-800'
+                        ? 'bg-brand-700 text-white shadow-md'
+                        : 'border border-stone-200/60 bg-stone-50/90 text-stone-800'
                     }`}
                   >
                     {msg.text}
@@ -208,13 +212,12 @@ export const OnboardingChat: React.FC<Props> = ({ onComplete }) => {
 
           {loading && (
             <div className="flex justify-start">
-              <div className="rounded-2xl border border-slate-200/60 bg-slate-50/80">
+              <div className="rounded-2xl border border-stone-200/60 bg-stone-50/80">
                 <TypingIndicator />
               </div>
             </div>
           )}
 
-          <div ref={bottomRef} />
         </div>
       </div>
     </div>

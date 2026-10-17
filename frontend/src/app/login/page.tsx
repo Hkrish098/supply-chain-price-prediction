@@ -148,12 +148,10 @@ export default function LoginPage() {
   };
 
   const inputClass =
-    'w-full rounded-xl border border-slate-200 bg-white/90 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 transition focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200';
+    'w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-900 placeholder-stone-400 transition focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-200';
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-white to-indigo-50/40">
-      <div className="pointer-events-none absolute -left-32 top-0 h-96 w-96 rounded-full bg-indigo-200/30 blur-3xl" />
-      <div className="pointer-events-none absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-violet-200/30 blur-3xl" />
+    <div className="relative min-h-screen overflow-hidden bg-background">
 
       <div className="relative mx-auto flex min-h-screen max-w-6xl flex-col items-center justify-center px-4 py-12">
         <motion.div
@@ -162,27 +160,27 @@ export default function LoginPage() {
           animate={{ opacity: 1, y: 0 }}
         >
           <Link href="/" className="inline-flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-xl text-white shadow-lg shadow-indigo-500/30">
-              📦
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-700 text-xl text-white shadow-sm">
+              PI
             </div>
             <div className="text-left">
-              <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">Supply Chain</p>
-              <p className="text-lg font-bold text-slate-900">Price Predictor</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-brand-600">Procurement</p>
+              <p className="text-lg font-bold text-stone-900">Intelligence Module</p>
             </div>
           </Link>
         </motion.div>
 
         <motion.div
-          className="w-full max-w-xl rounded-3xl border border-slate-200/60 bg-white/80 p-8 shadow-2xl shadow-indigo-200/20 backdrop-blur-xl"
+          className="w-full max-w-xl rounded-3xl border border-stone-200/60 bg-white p-8 shadow-sm"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
           <div className="mb-6 text-center">
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-bold text-stone-900">
               {mode === 'signup' ? 'Create your account' : 'Welcome back'}
             </h1>
-            <p className="mt-2 text-sm text-slate-600">
+            <p className="mt-2 text-sm text-stone-600">
               {mode === 'signup'
                 ? 'First time here? Tell us a bit about you.'
                 : 'Sign in with your email to continue.'}
@@ -193,7 +191,7 @@ export default function LoginPage() {
             type="button"
             onClick={signInWithGoogle}
             disabled={loading}
-            className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50 disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-3 rounded-xl border border-stone-200 bg-white px-4 py-3 text-sm font-semibold text-stone-800 shadow-sm transition hover:bg-stone-50 disabled:opacity-60"
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
           >
@@ -202,17 +200,17 @@ export default function LoginPage() {
           </motion.button>
 
           <div className="my-6 flex items-center gap-3">
-            <div className="h-px flex-1 bg-slate-200" />
-            <span className="text-xs font-medium uppercase tracking-wider text-slate-400">or</span>
-            <div className="h-px flex-1 bg-slate-200" />
+            <div className="h-px flex-1 bg-stone-200" />
+            <span className="text-xs font-medium uppercase tracking-wider text-stone-400">or</span>
+            <div className="h-px flex-1 bg-stone-200" />
           </div>
 
-          <div className="mb-6 flex rounded-xl bg-slate-100 p-1">
+          <div className="mb-6 flex rounded-xl bg-stone-100 p-1">
             <button
               type="button"
               onClick={() => { setMode('signup'); setError(null); setSuccess(null); }}
               className={`flex-1 rounded-lg py-2 text-sm font-semibold transition ${
-                mode === 'signup' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600'
+                mode === 'signup' ? 'bg-white text-brand-600 shadow-sm' : 'text-stone-600'
               }`}
             >
               Sign up
@@ -221,7 +219,7 @@ export default function LoginPage() {
               type="button"
               onClick={() => { setMode('login'); setError(null); setSuccess(null); }}
               className={`flex-1 rounded-lg py-2 text-sm font-semibold transition ${
-                mode === 'login' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-600'
+                mode === 'login' ? 'bg-white text-brand-600 shadow-sm' : 'text-stone-600'
               }`}
             >
               Log in
@@ -240,7 +238,7 @@ export default function LoginPage() {
               >
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="mb-2 block text-sm font-semibold text-slate-700">Full name</label>
+                    <label className="mb-2 block text-sm font-semibold text-stone-700">Full name</label>
                     <input
                       type="text"
                       value={fullName}
@@ -250,7 +248,7 @@ export default function LoginPage() {
                     />
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-semibold text-slate-700">Username</label>
+                    <label className="mb-2 block text-sm font-semibold text-stone-700">Username</label>
                     <input
                       type="text"
                       value={username}
@@ -260,7 +258,7 @@ export default function LoginPage() {
                     />
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-semibold text-slate-700">Email</label>
+                    <label className="mb-2 block text-sm font-semibold text-stone-700">Email</label>
                     <input
                       type="email"
                       value={email}
@@ -270,7 +268,7 @@ export default function LoginPage() {
                     />
                   </div>
                   <div>
-                    <label className="mb-2 block text-sm font-semibold text-slate-700">Phone number</label>
+                    <label className="mb-2 block text-sm font-semibold text-stone-700">Phone number</label>
                     <input
                       type="tel"
                       value={phone}
@@ -280,7 +278,7 @@ export default function LoginPage() {
                     />
                   </div>
                   <div className="sm:col-span-2">
-                    <label className="mb-2 block text-sm font-semibold text-slate-700">Password</label>
+                    <label className="mb-2 block text-sm font-semibold text-stone-700">Password</label>
                     <input
                       type="password"
                       value={password}
@@ -293,7 +291,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-500/30 transition hover:shadow-indigo-500/50 disabled:opacity-60"
+                  className="w-full rounded-xl bg-brand-700 py-3 text-sm font-bold text-white shadow-sm transition disabled:opacity-60"
                 >
                   {loading ? 'Creating account…' : 'Create account'}
                 </button>
@@ -308,7 +306,7 @@ export default function LoginPage() {
                 exit={{ opacity: 0, x: -10 }}
               >
                 <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700">Email</label>
+                  <label className="mb-2 block text-sm font-semibold text-stone-700">Email</label>
                   <input
                     type="email"
                     value={email}
@@ -318,7 +316,7 @@ export default function LoginPage() {
                   />
                 </div>
                 <div>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700">Password</label>
+                  <label className="mb-2 block text-sm font-semibold text-stone-700">Password</label>
                   <input
                     type="password"
                     value={password}
@@ -330,7 +328,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-500/30 transition hover:shadow-indigo-500/50 disabled:opacity-60"
+                  className="w-full rounded-xl bg-brand-700 py-3 text-sm font-bold text-white shadow-sm transition disabled:opacity-60"
                 >
                   {loading ? 'Signing in…' : 'Log in'}
                 </button>
@@ -361,8 +359,8 @@ export default function LoginPage() {
             )}
           </AnimatePresence>
 
-          <p className="mt-6 text-center text-sm text-slate-500">
-            <Link href="/" className="font-medium text-indigo-600 hover:text-indigo-700">
+          <p className="mt-6 text-center text-sm text-stone-500">
+            <Link href="/" className="font-medium text-brand-600 hover:text-brand-700">
               ← Back to dashboard
             </Link>
           </p>

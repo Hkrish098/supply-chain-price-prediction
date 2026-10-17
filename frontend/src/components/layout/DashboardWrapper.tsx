@@ -8,7 +8,7 @@ export const DashboardWrapper: React.FC<React.PropsWithChildren<Record<string, u
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="mesh-background relative min-h-screen text-slate-900 overflow-hidden">
+    <div className="workspace-background relative min-h-screen text-stone-900 overflow-x-clip">
       <Navbar onOpenSidebar={() => setOpen(true)} />
 
       {/* Mobile sidebar overlay */}
@@ -21,7 +21,7 @@ export const DashboardWrapper: React.FC<React.PropsWithChildren<Record<string, u
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+              className="fixed inset-0 bg-black/40"
               onClick={() => setOpen(false)}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -34,13 +34,13 @@ export const DashboardWrapper: React.FC<React.PropsWithChildren<Record<string, u
               exit={{ x: -300 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             >
-              <Sidebar onClose={() => setOpen(false)} className="!block h-full" />
+              <Sidebar onClose={() => setOpen(false)} className="!flex !h-full !top-0" />
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="mx-auto grid max-w-[1600px] grid-cols-1 gap-6 px-4 py-8 sm:px-6 lg:px-8 xl:grid-cols-[260px_1fr] min-h-[calc(100vh-88px)]">
+      <div className="mx-auto grid max-w-[1600px] grid-cols-1 gap-6 px-4 py-6 sm:px-6 lg:px-8 xl:grid-cols-[260px_1fr] min-h-[calc(100vh-88px)]">
         <motion.div
           className="sticky top-24 hidden self-start xl:block"
           initial={{ opacity: 0, x: -20 }}
@@ -49,14 +49,14 @@ export const DashboardWrapper: React.FC<React.PropsWithChildren<Record<string, u
         >
           <Sidebar />
         </motion.div>
-        <motion.main
+        <motion.div
           className="min-h-[70vh] w-full min-w-0"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
         >
           {children}
-        </motion.main>
+        </motion.div>
       </div>
     </div>
   );

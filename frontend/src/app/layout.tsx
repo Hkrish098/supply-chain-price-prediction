@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Supply Chain Price Prediction',
-  description: 'Dashboard for supply chain price prediction',
+  title: 'Procurement Intelligence Module',
+  description: 'Unit price forecasts and market context for better procurement decisions',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

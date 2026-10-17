@@ -32,15 +32,15 @@ export const Auth: React.FC = () => {
   if (user) {
     return (
       <div className="flex items-center gap-2">
-        <span className="text-sm text-slate-700">{user.email}</span>
-        <button onClick={signOut} className="rounded px-3 py-1 text-sm bg-slate-100">Sign out</button>
+        <span className="text-sm text-stone-700">{user.email}</span>
+        <button onClick={signOut} className="rounded px-3 py-1 text-sm bg-stone-100">Sign out</button>
       </div>
     );
   }
 
   return (
     <div>
-      <button onClick={signInWithGoogle} className="rounded bg-indigo-600 px-3 py-2 text-sm text-white">Sign in with Google</button>
+      <button onClick={signInWithGoogle} className="rounded bg-brand-600 px-3 py-2 text-sm text-white">Sign in with Google</button>
     </div>
   );
 };
